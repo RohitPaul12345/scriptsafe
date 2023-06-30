@@ -1,14 +1,14 @@
 // ScriptSafe - Copyright (C) andryou
 // Distributed under the terms of the GNU General Public License
 // The GNU General Public License can be found in the gpl.txt file. Alternatively, see <http://www.gnu.org/licenses/>.
-var savedBeforeloadEvents = new Array();
-var timer;
-var iframe = 0;
-var clipboard = false;
-var timestamp = Math.round(new Date().getTime()/1000.0);
-var linktrgt;
+let savedBeforeloadEvents = new Array();
+let timer;
+let iframe = 0;
+let clipboard = false;
+let timestamp = Math.round(new Date().getTime()/1000.0);
+let linktrgt;
 // initialize settings object with default settings (that are overwritten by the actual user-set values later on)
-var SETTINGS = {
+let SETTINGS = {
 	"MODE": "block",
 	"LISTSTATUS": "false",
 	"DOMAINSTATUS": "-1",
@@ -139,7 +139,7 @@ chrome.runtime.sendMessage({reqtype: "get-settings", iframe: iframe}, function(r
 			}
 		});
 		document.addEventListener("beforeload", block, true); // eventually remove
-		for (var i = 0; i < savedBeforeloadEvents.length; i++) // eventually remove
+		for (let i = 0; i < savedBeforeloadEvents.length; i++) // eventually remove
 			block(savedBeforeloadEvents[i]); // eventually remove
 	}
 	delete savedBeforeloadEvents; // eventually remove
@@ -150,7 +150,7 @@ function fingerprintProtection() {
 			/* Browser Plugins */
 			if (browserplugins == 'true') {
 				scope.Object.defineProperty(navigator, "plugins", {enumerable: true, configurable: true, get: function() {
-					var browserplugins_triggerblock = scope.document.createElement('div');
+					let browserplugins_triggerblock = scope.document.createElement('div');
 					browserplugins_triggerblock.className = 'scriptsafe_oiigbmnaadbkfbmpbfijlflahbdbdgdf_browserplugins';
 					browserplugins_triggerblock.title = 'navigator.plugins';
 					document.documentElement.appendChild(browserplugins_triggerblock);
@@ -159,15 +159,15 @@ function fingerprintProtection() {
 			}
 			/* Canvas */
 			if (canvas != 'false') {
-				var fakecanvas = scope.document.createElement('canvas');
+				let fakecanvas = scope.document.createElement('canvas');
 				fakecanvas.className = 'scriptsafe_oiigbmnaadbkfbmpbfijlflahbdbdgdf_canvas';
 				if (canvas == 'random') {
-					var fakewidth = fakecanvas.width = Math.floor(Math.random() * 999) + 1;
-					var fakeheight = fakecanvas.height = Math.floor(Math.random() * 999) + 1;
+					let fakewidth = fakecanvas.width = Math.floor(Math.random() * 999) + 1;
+					let fakeheight = fakecanvas.height = Math.floor(Math.random() * 999) + 1;
 				}
-				var canvas_a = scope.HTMLCanvasElement;
-				var origToDataURL = canvas_a.prototype.toDataURL;
-				var origToBlob = canvas_a.prototype.toBlob;
+				let canvas_a = scope.HTMLCanvasElement;
+				let origToDataURL = canvas_a.prototype.toDataURL;
+				let origToBlob = canvas_a.prototype.toBlob;
 				canvas_a.prototype.toDataURL = function() {
 					fakecanvas.title = 'toDataURL';
 					document.documentElement.appendChild(fakecanvas);
@@ -192,8 +192,8 @@ function fingerprintProtection() {
 						return origToBlob.apply(fakecanvas, arguments);
 					}
 				};
-				var canvas_b = scope.CanvasRenderingContext2D;
-				var origGetImageData = canvas_b.prototype.getImageData;
+				let canvas_b = scope.CanvasRenderingContext2D;
+				let origGetImageData = canvas_b.prototype.getImageData;
 				canvas_b.prototype.getImageData = function() {
 					fakecanvas.title = 'getImageData';
 					document.documentElement.appendChild(fakecanvas);
@@ -206,7 +206,7 @@ function fingerprintProtection() {
 						return origGetImageData.apply(fakecanvas.getContext('2d'), [Math.floor(Math.random() * fakewidth) + 1, Math.floor(Math.random() * fakeheight) + 1, Math.floor(Math.random() * fakewidth) + 1, Math.floor(Math.random() * fakeheight) + 1]);
 					}
 				}
-				var origGetLineDash = canvas_b.prototype.getLineDash;
+				let origGetLineDash = canvas_b.prototype.getLineDash;
 				canvas_b.prototype.getLineDash = function() {
 					fakecanvas.title = 'getLineDash';
 					document.documentElement.appendChild(fakecanvas);
@@ -219,8 +219,8 @@ function fingerprintProtection() {
 						return origGetLineDash.apply(fakecanvas.getContext('2d'), [Math.floor(Math.random() * fakewidth) + 1, Math.floor(Math.random() * fakeheight) + 1]);
 					}
 				}
-				var canvas_c = scope.WebGLRenderingContext;
-				var origReadPixels = canvas_c.prototype.readPixels;
+				let canvas_c = scope.WebGLRenderingContext;
+				let origReadPixels = canvas_c.prototype.readPixels;
 				canvas_c.prototype.readPixels = function() {
 					fakecanvas.title = 'readPixels';
 					document.documentElement.appendChild(fakecanvas);
@@ -236,9 +236,9 @@ function fingerprintProtection() {
 			}
 			/* Audio Block */
 			if (audioblock == 'true') {
-				var audioblock_triggerblock = scope.document.createElement('div');
+				let audioblock_triggerblock = scope.document.createElement('div');
 				audioblock_triggerblock.className = 'scriptsafe_oiigbmnaadbkfbmpbfijlflahbdbdgdf_audio';
-				var audioblock_a = scope.AudioBuffer;
+				let audioblock_a = scope.AudioBuffer;
 				audioblock_a.prototype.copyFromChannel = function() {
 					audioblock_triggerblock.title = 'copyFromChannel';
 					document.documentElement.appendChild(audioblock_triggerblock);
@@ -249,7 +249,7 @@ function fingerprintProtection() {
 					document.documentElement.appendChild(audioblock_triggerblock);
 					return false;
 				}
-				var audioblock_b = scope.AnalyserNode;
+				let audioblock_b = scope.AnalyserNode;
 				audioblock_b.prototype.getFloatFrequencyData = function() {
 					audioblock_triggerblock.title = 'getFloatFrequencyData';
 					document.documentElement.appendChild(audioblock_triggerblock);
@@ -270,7 +270,7 @@ function fingerprintProtection() {
 					document.documentElement.appendChild(audioblock_triggerblock);
 					return false;
 				}
-				var audioblock_c = scope;
+				let audioblock_c = scope;
 				audioblock_c.AudioContext = function() {
 					audioblock_triggerblock.title = 'AudioContext';
 					document.documentElement.appendChild(audioblock_triggerblock);
@@ -284,9 +284,9 @@ function fingerprintProtection() {
 			}
 			/* Canvas Font */
 			if (canvasfont == 'true') {
-				var canvasfont_triggerblock = scope.document.createElement('div');
+				let canvasfont_triggerblock = scope.document.createElement('div');
 				canvasfont_triggerblock.className = 'scriptsafe_oiigbmnaadbkfbmpbfijlflahbdbdgdf_canvasfont';
-				var canvasfont_a = scope.CanvasRenderingContext2D;
+				let canvasfont_a = scope.CanvasRenderingContext2D;
 				canvasfont_a.prototype.measureText = function() {
 					canvasfont_triggerblock.title = 'measureText';
 					document.documentElement.appendChild(canvasfont_triggerblock);
@@ -295,9 +295,9 @@ function fingerprintProtection() {
 			}
 			/* Battery */
 			if (battery == 'true') {
-				var battery_triggerblock = scope.document.createElement('div');
+				let battery_triggerblock = scope.document.createElement('div');
 				battery_triggerblock.className = 'scriptsafe_oiigbmnaadbkfbmpbfijlflahbdbdgdf_battery';
-				var battery_a = scope.navigator;
+				let battery_a = scope.navigator;
 				battery_a.getBattery = function() {
 					battery_triggerblock.title = 'getBattery';
 					document.documentElement.appendChild(battery_triggerblock);
@@ -306,10 +306,10 @@ function fingerprintProtection() {
 			}
 			/* WebGL */
 			if (webgl == 'true') {
-				var webgl_triggerblock = scope.document.createElement('div');
+				let webgl_triggerblock = scope.document.createElement('div');
 				webgl_triggerblock.className = 'scriptsafe_oiigbmnaadbkfbmpbfijlflahbdbdgdf_webgl';
-				var webgl_a = scope.HTMLCanvasElement;
-				var origGetContext = webgl_a.prototype.getContext;
+				let webgl_a = scope.HTMLCanvasElement;
+				let origGetContext = webgl_a.prototype.getContext;
 				webgl_a.prototype.getContext = function(arg) {
 					if (arg.match(/webgl/i)) {
 						webgl_triggerblock.title = 'getContext';
@@ -321,9 +321,9 @@ function fingerprintProtection() {
 			}
 			/* WebRTC */
 			if (webrtcdevice == 'true') {
-				var webrtc_triggerblock = scope.document.createElement('div');
+				let webrtc_triggerblock = scope.document.createElement('div');
 				webrtc_triggerblock.className = 'scriptsafe_oiigbmnaadbkfbmpbfijlflahbdbdgdf_webrtc';
-				var webrtc_a = scope.MediaStreamTrack;
+				let webrtc_a = scope.MediaStreamTrack;
 				webrtc_a.getSources = function() {
 					webrtc_triggerblock.title = 'getSources';
 					document.documentElement.appendChild(webrtc_triggerblock);
@@ -334,7 +334,7 @@ function fingerprintProtection() {
 					document.documentElement.appendChild(webrtc_triggerblock);
 					return false;
 				}
-				var webrtc_b = scope.navigator.mediaDevices;
+				let webrtc_b = scope.navigator.mediaDevices;
 				webrtc_b.enumerateDevices = function() {
 					webrtc_triggerblock.title = 'enumerateDevices';
 					document.documentElement.appendChild(webrtc_triggerblock);
@@ -343,9 +343,9 @@ function fingerprintProtection() {
 			}
 			/* Gamepad */
 			if (gamepad == 'true') {
-				var gamepad_triggerblock = scope.document.createElement('div');
+				let gamepad_triggerblock = scope.document.createElement('div');
 				gamepad_triggerblock.className = 'scriptsafe_oiigbmnaadbkfbmpbfijlflahbdbdgdf_gamepad';
-				var gamepad_a = scope.navigator;
+				let gamepad_a = scope.navigator;
 				gamepad_a.getGamepads = function() {
 					gamepad_triggerblock.title = 'getGamepads';
 					document.documentElement.appendChild(gamepad_triggerblock);
@@ -354,9 +354,9 @@ function fingerprintProtection() {
 			}
 			/* WebVR */
 			if (webvr == 'true') {
-				var webvr_triggerblock = scope.document.createElement('div');
+				let webvr_triggerblock = scope.document.createElement('div');
 				webvr_triggerblock.className = 'scriptsafe_oiigbmnaadbkfbmpbfijlflahbdbdgdf_webvr';
-				var webvr_a = scope.navigator;
+				let webvr_a = scope.navigator;
 				webvr_a.getVRDisplays = function() {
 					webvr_triggerblock.title = 'getVRDisplays';
 					document.documentElement.appendChild(webvr_triggerblock);
@@ -366,9 +366,9 @@ function fingerprintProtection() {
 			/* Bluetooth */
 			if (bluetooth == 'true') {
 				if (scope.navigator.bluetooth) {
-					var bluetooth_triggerblock = scope.document.createElement('div');
+					let bluetooth_triggerblock = scope.document.createElement('div');
 					bluetooth_triggerblock.className = 'scriptsafe_oiigbmnaadbkfbmpbfijlflahbdbdgdf_bluetooth';
-					var bluetooth_a = scope.navigator.bluetooth;
+					let bluetooth_a = scope.navigator.bluetooth;
 					bluetooth_a.requestDevice = function() {
 						bluetooth_triggerblock.title = 'requestDevice';
 						document.documentElement.appendChild(bluetooth_triggerblock);
@@ -378,7 +378,7 @@ function fingerprintProtection() {
 			}
 			/* Client Rectangles */
 			if (clientrects == 'true') {
-				var clientrects_triggerblock = scope.document.createElement('div');
+				let clientrects_triggerblock = scope.document.createElement('div');
 				clientrects_triggerblock.className = 'scriptsafe_oiigbmnaadbkfbmpbfijlflahbdbdgdf_clientrects';
 				Element.prototype.getClientRects = function() {
 					clientrects_triggerblock.title = 'getClientRects';
@@ -388,9 +388,9 @@ function fingerprintProtection() {
 			}
 			/* Timezone */
 			if (timezone != 'false') {
-				var timezone_triggerblock = scope.document.createElement('div');
+				let timezone_triggerblock = scope.document.createElement('div');
 				timezone_triggerblock.className = 'scriptsafe_oiigbmnaadbkfbmpbfijlflahbdbdgdf_timezone';
-				var timezone_a = scope.Date;
+				let timezone_a = scope.Date;
 				timezone_a.prototype.getTimezoneOffset = function() {
 					timezone_triggerblock.title = 'getTimezoneOffset';
 					document.documentElement.appendChild(timezone_triggerblock);
@@ -400,10 +400,10 @@ function fingerprintProtection() {
 			}
 			/* Clipboard */
 			if (clipboard == 'true') {
-				var clipboard_triggerblock = scope.document.createElement('div');
+				let clipboard_triggerblock = scope.document.createElement('div');
 				clipboard_triggerblock.className = 'scriptsafe_oiigbmnaadbkfbmpbfijlflahbdbdgdf_clipboard';
-				var clipboard_a = document;
-				var origExecCommand = clipboard_a.execCommand;
+				let clipboard_a = document;
+				let origExecCommand = clipboard_a.execCommand;
 				clipboard_a.execCommand = function() {
 					clipboard_triggerblock.title = 'execCommand';
 					document.documentElement.appendChild(clipboard_triggerblock);
@@ -413,11 +413,11 @@ function fingerprintProtection() {
 			}
 		}
 		processFunctions(window);
-		var iwin = HTMLIFrameElement.prototype.__lookupGetter__('contentWindow'), idoc = HTMLIFrameElement.prototype.__lookupGetter__('contentDocument');
+		let iwin = HTMLIFrameElement.prototype.__lookupGetter__('contentWindow'), idoc = HTMLIFrameElement.prototype.__lookupGetter__('contentDocument');
 		Object.defineProperties(HTMLIFrameElement.prototype, {
 			contentWindow: {
 				get: function() {
-					var frame = iwin.apply(this);
+					let frame = iwin.apply(this);
 					if (this.src && this.src.indexOf('//') != -1 && location.host != this.src.split('/')[2]) return frame;
 					try { frame.HTMLCanvasElement } catch (err) { /* do nothing*/ }
 					processFunctions(frame);
@@ -427,7 +427,7 @@ function fingerprintProtection() {
 			contentDocument: {
 				get: function() {
 					if (this.src && this.src.indexOf('//') != -1 && location.host != this.src.split('/')[2]) return idoc.apply(this);
-					var frame = iwin.apply(this);
+					let frame = iwin.apply(this);
 					try { frame.HTMLCanvasElement } catch (err) { /* do nothing*/ }
 					processFunctions(frame);
 					return idoc.apply(this);
@@ -437,8 +437,8 @@ function fingerprintProtection() {
 	}, "'"+SETTINGS['CANVAS']+"','"+SETTINGS['CANVASFONT']+"','"+SETTINGS['AUDIOBLOCK']+"','"+SETTINGS['BATTERY']+"','"+SETTINGS['WEBGL']+"','"+SETTINGS['WEBRTCDEVICE']+"','"+SETTINGS['GAMEPAD']+"','"+SETTINGS['WEBVR']+"','"+SETTINGS['BLUETOOTH']+"','"+SETTINGS['TIMEZONE']+"','"+SETTINGS['CLIENTRECTS']+"','"+SETTINGS['CLIPBOARD']+"', '"+SETTINGS['BROWSERPLUGINS']+"'");
 }
 function clipboardProtect(el) {
-    var arr = ['copy', 'cut', 'paste', 'selectstart', 'contextmenu', 'mousedown', 'mouseup'];
-    for (var i = 0; i < arr.length; i++) {
+    let arr = ['copy', 'cut', 'paste', 'selectstart', 'contextmenu', 'mousedown', 'mouseup'];
+    for (let i = 0; i < arr.length; i++) {
         if (el['on' + arr[i]]) el['on' + arr[i]] = null;
         el.addEventListener(arr[i], function(e){ if (!clipboard) { clipboard = true; chrome.runtime.sendMessage({reqtype: "update-blocked", src: window.location.href+" ("+e.type+"())", node: 'Clipboard Interference'}); } e.stopPropagation(); }, true);
     };
@@ -450,8 +450,8 @@ function loaded() {
 function ScriptSafe() {
 	if (SETTINGS['LINKTARGET'] != 'off' || SETTINGS['DATAURL'] == 'true' || SETTINGS['REFERRER'] == 'alldomains' || (SETTINGS['REFERRER'] == 'true' && (SETTINGS['DOMAINSTATUS'] != '0' || SETTINGS['REFERRERSPOOFDENYWHITELISTED'] == 'true'))) {
 		$("a[data-ss"+timestamp+"!='1']").each(function() {
-			var elSrc = getElSrc(this);
-			var attr = {};		
+			let elSrc = getElSrc(this);
+			let attr = {};		
 			if ((SETTINGS['REFERRER'] == 'alldomains' || (SETTINGS['REFERRER'] == 'true' && (SETTINGS['DOMAINSTATUS'] != '0' || SETTINGS['REFERRERSPOOFDENYWHITELISTED'] == 'true'))) && thirdParty(elSrc)) attr['rel'] = 'noreferrer';
 			if (SETTINGS['LINKTARGET'] != 'off') {
 				if ($(this).attr('target') != linktrgt) attr['target'] = linktrgt;
@@ -549,16 +549,16 @@ function ScriptSafe() {
 }
 function postLoadCheck(elSrc) {
 	if (elSrc.substring(0,4) != 'http') return false;
-	var domainCheckStatus;
-	var thirdPartyCheck;
-	var elementStatusCheck;
-	var baddiesCheck = baddies(elSrc, SETTINGS['ANNOYANCESMODE'], SETTINGS['ANTISOCIAL'], 2);
+	let domainCheckStatus;
+	let thirdPartyCheck;
+	let elementStatusCheck;
+	let baddiesCheck = baddies(elSrc, SETTINGS['ANNOYANCESMODE'], SETTINGS['ANTISOCIAL'], 2);
 	if (SETTINGS['DOMAINSTATUS'] == '1' || (SETTINGS['DOMAINSTATUS'] == '-1' && SETTINGS['MODE'] == 'block' && SETTINGS['PARANOIA'] == 'true' && SETTINGS['PRESERVESAMEDOMAIN'] == 'false')) {
 		elementStatusCheck = true;
 		thirdPartyCheck = true;
 	} else {
 		domainCheckStatus = domainCheck(elSrc, 1);
-		var elementDomain = extractDomainFromURL(elSrc);
+		let elementDomain = extractDomainFromURL(elSrc);
 		if ((domainCheckStatus == '0' && !(SETTINGS['DOMAINSTATUS'] == '-1' && SETTINGS['MODE'] == 'block' && SETTINGS['PARANOIA'] == 'true')) || (SETTINGS['preservesamedomain'] == 'strict' && elementDomain == window.location.hostname)) thirdPartyCheck = false;
 		else if (SETTINGS['preservesamedomain'] == 'strict' && elementDomain != window.location.hostname) thirdPartyCheck = true;
 		else thirdPartyCheck = thirdParty(elSrc);
@@ -573,10 +573,10 @@ function postLoadCheck(elSrc) {
 function domainCheck(domain, req) {
 	if (!domain) return '-1';
 	if (req === undefined) {
-		var baddiesCheck = baddies(domain, SETTINGS['ANNOYANCESMODE'], SETTINGS['ANTISOCIAL']);
+		let baddiesCheck = baddies(domain, SETTINGS['ANNOYANCESMODE'], SETTINGS['ANTISOCIAL']);
 		if ((SETTINGS['ANNOYANCES'] == 'true' && SETTINGS['ANNOYANCESMODE'] == 'strict' && baddiesCheck == '1') || (SETTINGS['ANTISOCIAL'] == 'true' && baddiesCheck == '2')) return '1';
 	}
-	var domainname = extractDomainFromURL(domain);
+	let domainname = extractDomainFromURL(domain);
 	if (req != '2') {
 		if (SETTINGS['MODE'] == 'block' && in_array(domainname, SETTINGS['WHITELISTSESSION'])) return '0';
 		if (SETTINGS['MODE'] == 'allow' && in_array(domainname, SETTINGS['BLACKLISTSESSION'])) return '1';
@@ -609,15 +609,15 @@ function removeMedia($el) {
 	$el.remove().length = 0;
 };
 function getElSrc(el) {
-	var reStartWProtocol = /^[^\.\/:]+:\/\//i; // credit: NotScripts
+	let reStartWProtocol = /^[^\.\/:]+:\/\//i; // credit: NotScripts
 	switch (el.nodeName.toUpperCase()) {
 		case 'PICTURE':
-			var plist = el.getElementsByTagName('source');
-			for (var i=0; i < plist.length; i++) {
+			let plist = el.getElementsByTagName('source');
+			for (let i=0; i < plist.length; i++) {
 				if (plist[i].srcset) return plist[i].srcset;
 			}
 			plist = el.getElementsByTagName('img');
-			for (var i=0; i < plist.length; i++) {
+			for (let i=0; i < plist.length; i++) {
 				if (plist[i].src) return plist[i].src;
 			}
 			return window.location.href;
@@ -626,8 +626,8 @@ function getElSrc(el) {
 			if (el.src)	{
 				if (reStartWProtocol.test(el.src)) return el.src;
 			}
-			var plist = el.getElementsByTagName('source');
-			for (var i=0; i < plist.length; i++) {
+			let plist = el.getElementsByTagName('source');
+			for (let i=0; i < plist.length; i++) {
 				if (plist[i].src) return plist[i].src;
 			}
 			return window.location.href;
@@ -636,8 +636,8 @@ function getElSrc(el) {
 			if (el.src)	{
 				if (reStartWProtocol.test(el.src)) return el.src;
 			}
-			var plist = el.getElementsByTagName('source');
-			for (var i=0; i < plist.length; i++) {
+			let plist = el.getElementsByTagName('source');
+			for (let i=0; i < plist.length; i++) {
 				if (plist[i].src) return plist[i].src;
 			}
 			return window.location.href;
@@ -648,9 +648,9 @@ function getElSrc(el) {
 				if (reStartWProtocol.test(el.data)) return el.data;
 				else return codeBase;				
 			}
-			var plist = el.getElementsByTagName('param');
-			for (var i=0; i < plist.length; i++) {
-				var paramName = plist[i].name.toLowerCase();
+			let plist = el.getElementsByTagName('param');
+			for (let i=0; i < plist.length; i++) {
+				let paramName = plist[i].name.toLowerCase();
 				if (paramName === 'movie' || paramName === 'src' || paramName === 'codebase' || paramName === 'data')
 					return plist[i].value;
 				else if (paramName === 'code' || paramName === 'url')
@@ -659,7 +659,7 @@ function getElSrc(el) {
 			return window.location.href;
 			break;
 		case 'EMBED': // credit: NotScripts
-			var codeBase = window.location.href;
+			let codeBase = window.location.href;
 			if (el.codeBase) codeBase = el.codeBase;
 			if (el.src)	{
 				if (reStartWProtocol.test(el.src)) return el.src;
@@ -684,11 +684,11 @@ function getElSrc(el) {
 	}
 }
 function randomDelay() {
-	var zzz = (Date.now() + (Math.floor(Math.random() * SETTINGS['KEYDELTA'])));
+	let zzz = (Date.now() + (Math.floor(Math.random() * SETTINGS['KEYDELTA'])));
 	while (Date.now() < zzz) {};
 }
 function injectAnon(f, val) {
-    var script = document.createElement("script");
+    let script = document.createElement("script");
 	val = val || '';
 	script.type = "text/javascript";
     script.textContent = "(" + f + ")("+val+");";
@@ -697,9 +697,9 @@ function injectAnon(f, val) {
 /* Fallback Inline Script Handling (if Chrome doesn't support chrome.webRequest API) / */
 function mitigate() { // credit: NotScripts
 	injectAnon(function(){
-		for (var i in window) {
+		for (let i in window) {
 			try {
-				var jsType = typeof window[i];
+				let jsType = typeof window[i];
 				switch (jsType.toUpperCase()) {					
 					case "FUNCTION": 
 						if (window[i] !== window.location) {
@@ -716,9 +716,9 @@ function mitigate() { // credit: NotScripts
 				}			
 			} catch(err) {}		
 		}
-		for (var i in document) {
+		for (let i in document) {
 			try {
-				var jsType = typeof document[i];
+				let jsType = typeof document[i];
 				switch (jsType.toUpperCase()) {					
 					case "FUNCTION":
 						document[i] = function(){return "";};
@@ -754,7 +754,7 @@ function mitigate() { // credit: NotScripts
 }
 function clearUnloads() { // credit: NotScripts
 	clearTimeout(timer);
-	var keepGoing = (window.onbeforeunload || window.onunload);
+	let keepGoing = (window.onbeforeunload || window.onunload);
 	window.onbeforeunload = null;
 	window.onunload = null;
 	if (keepGoing) timer = setTimeout(function() { clearUnloads() }, 5000);
@@ -765,29 +765,29 @@ function saveBeforeloadEvent(e) {
 	savedBeforeloadEvents.push(e);
 }
 function block(event) {
-	var el = event.target;
-	var elSrc = getElSrc(el);
+	let el = event.target;
+	let elSrc = getElSrc(el);
 	if (!elSrc) return;
-	var elType = el.nodeName.toUpperCase();
+	let elType = el.nodeName.toUpperCase();
 	if (!(elType == "A" || elType == "IFRAME" || elType == "FRAME" || (elType == "SCRIPT" && SETTINGS['EXPERIMENTAL'] == '0') || elType == "EMBED" || elType == "OBJECT" || elType == "IMG")) return;
 	elSrc = elSrc.toLowerCase();
-	var absoluteUrl = relativeToAbsoluteUrl(elSrc);
+	let absoluteUrl = relativeToAbsoluteUrl(elSrc);
 	if (absoluteUrl.substr(0,4) != 'http') return;
-	var thirdPartyCheck;
-	var elementStatusCheck;
-	var domainCheckStatus;
-	var $el = $(el);
-	var elWidth = $el.attr('width');
-	var elHeight = $el.attr('height');
-	var elStyle = $el.attr('style');
-	var baddiesCheck = baddies(absoluteUrl, SETTINGS['ANNOYANCESMODE'], SETTINGS['ANTISOCIAL']);
+	let thirdPartyCheck;
+	let elementStatusCheck;
+	let domainCheckStatus;
+	let $el = $(el);
+	let elWidth = $el.attr('width');
+	let elHeight = $el.attr('height');
+	let elStyle = $el.attr('style');
+	let baddiesCheck = baddies(absoluteUrl, SETTINGS['ANNOYANCESMODE'], SETTINGS['ANTISOCIAL']);
 	if (SETTINGS['DOMAINSTATUS'] == '1' || (SETTINGS['DOMAINSTATUS'] == '-1' && SETTINGS['MODE'] == 'block' && SETTINGS['PARANOIA'] == 'true' && SETTINGS['PRESERVESAMEDOMAIN'] == 'false')) {
 		elementStatusCheck = true;
 		thirdPartyCheck = true;
 		domainCheckStatus = '1';
 	} else {
 		domainCheckStatus = domainCheck(absoluteUrl, 1);
-		var elementDomain = extractDomainFromURL(absoluteUrl);
+		let elementDomain = extractDomainFromURL(absoluteUrl);
 		if ((domainCheckStatus == '0' && !(SETTINGS['DOMAINSTATUS'] == '-1' && SETTINGS['MODE'] == 'block' && SETTINGS['PARANOIA'] == 'true')) || (SETTINGS['PRESERVESAMEDOMAIN'] == 'strict' && elementDomain == window.location.hostname)) thirdPartyCheck = false;
 		else if (SETTINGS['PRESERVESAMEDOMAIN'] == 'strict' && elementDomain != window.location.hostname) thirdPartyCheck = true;
 		else thirdPartyCheck = thirdParty(absoluteUrl);
