@@ -1,9 +1,9 @@
-// ScriptSafe - Copyright (C) andryou
-// Distributed under the terms of the GNU General Public License
-// The GNU General Public License can be found in the gpl.txt file. Alternatively, see <http://www.gnu.org/licenses/>.
-var bkg = chrome.extension.getBackgroundPage();
+/* ScriptSafe - Copyright (C) andryou
+ Distributed under the terms of the GNU General Public License
+ The GNU General Public License can be found in the gpl.txt file. Alternatively, see <http://www.gnu.org/licenses/>.*/
+let bkg = chrome.extension.getBackgroundPage();
 document.addEventListener('DOMContentLoaded', function () {
-	var version = '1.0.9.3';
+	let version = '1.0.9.3';
 	$("#title").html("ScriptSafe v"+version);
 	$('#versionno').html(version);
 	$("#loadoptionspage").click(function() { location.href='options.html'; });
